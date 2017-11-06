@@ -1,0 +1,4 @@
+Syntax of Markdown：
+
+1、强调：*强调内容*
+
