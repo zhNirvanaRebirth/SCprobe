@@ -41,7 +41,7 @@ struct zhwilson_qset {
 		分配设备编号（知道开始设备号）
 		first:开始的设备号（其次编号常常是0）
 		count:请求的连续设备编号的总数
-		name:链接到这个编号范围的设备的名字（它会出现在/proc/devices/和/sys/fs/文件中）
+		name:链接到这个编号范围的设备的名字（它会出现在/proc/devices和/sysfs文件中）
 		return:成功返回0, 错误返回负值
 	*/
 	int register_chrdev_region(dev_t first, unsigned int count, char *name);
@@ -99,6 +99,35 @@ struct inode {
 	int cdev_add(struct cdev *cdev, dev_t first, unsigned int count);//成功返回0，失败返回负值
 删除设备：void cdev_del(struct cdev *cdev);
 
+//proc文件系统
+struct proc_dir_entry {
+	const char *name;//virtual file name
+	mode_t mode;//mode permission
+	uid_t uid;//file's user id
+	gid_t gid;//file's group id
+	struct inode_operations *proc_iops;//inode operation functions
+	struct file_operations *proc_fops;//file operation functions
+	struct proc_dir_entry *parent;//parent directory
+	read_proc_t *read_proc;//proc read function
+	write_proc_t *write_proc;//proc write function
+	void *data;//pointer to private data
+	atomic_t count;//use count
+}
+
+创建一个虚拟文件：struct proc_dir_entry *create_proc_entry(const char *name, mode_t mode, struct proc_dir_entry *parent);//成功返回proc_dir_entry,失败返回NULL
+删除一个虚拟文件：void remove_proc_entry(const char *name, struct proc_dir_entry *parent);
+向虚拟文件中写入数据：
+/*
+	filp 参数实际上是一个打开文件结构（我们可以忽略这个参数）。buff 参数是传递给您的字符串数据。缓冲区地址实际上是一个用户空间的缓冲区，因此我们不能直接读取它。len 参数定义了在 buff 中有多少数据要被写入。data 参数是一个指向私有数据的指针（参见 清单 7）。在这个模块中，我们声明了一个这种类型的函数来处理到达的数据。
+	Linux 提供了一组 API 来在用户空间和内核空间之间移动数据。对于 write_proc 的情况来说，我们使用了 copy_from_user 函数来维护用户空间的数据。
+*/
+int mod_write(struct file *filp, const char __user *buf, unsigned long len, void *data);
+从虚拟文件中读取数据：
+/*
+	page 参数是这些数据写入到的位置，其中 count 定义了可以写入的最大字符数。在返回多页数据（通常一页是 4KB）时，我们需要使用 start 和 off 参数。当所有数据全部写入之后，就需要设置 eof（文件结束参数）。与 write 类似，data 表示的也是私有数据。此处提供的 page 缓冲区在内核空间中。因此，我们可以直接写入，而不用调用 copy_to_user。
+*/
+int mod_read(char *page, char **start, off_t off, int count, int *eof, void *data);
+
 //驱动加载步骤及方法
 1、动态分配主设备号和从设备号
 2、为设备分配内存
@@ -107,7 +136,8 @@ struct inode {
 5、在/dev/目录和/sys/class/设备类型/目录下创建设备文件
 6、在/sys/class/设备类型/设备文件/目录下创建属性文件
 7、存储驱动中要用到的私有数据：dev_set_drvdata
-8、在/proc/目录下创建设备文件
+8、在/proc/目录下创建设备文件以及相关操作
+9、定义属性并设置属性的访问方法
 
 //驱动卸载处理
 1、若设备编号分配成功，将其释放
@@ -128,6 +158,7 @@ struct inode {
 #define ZHWILSON_INFO_NODE_NAME "zhwilson_info"     //设备节点名字
 #define ZHWILSON_INFO_CLASS_NAME "zhwilson_info"     //设备类别目录名字
 #define ZHWILSON_INFO_FILE_NAME "zhwilson_info"     //设备文件名字
+#define ZHWILSON_INFO_PROC_NAME "zhwilson_info"     //设备在/proc/目录下的名字
 
 //设备结构
 struct zhwilson_dev {
@@ -143,6 +174,7 @@ struct zhwilson_dev {
 #include<linux/module.h>
 #include<linux/cdev.h>
 #include<linux/errno.h>
+#include<linux/proc_fs.h>
 #include "info.h"
 
 //许可
@@ -157,10 +189,10 @@ static struct zhwilson_dev *zhwilson_info_dev = NULL;
 static struct class *zhwilson_info_class = NULL;
 
 //设备操作方法
-struct int zhwilson_info_open(struct inode *inode, struct file *filp);
-struct int zhwilson_info_release(struct inode *inode, struct file *fiep);
-struct ssize_t zhwilson_info_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos);
-struct ssize_t zhwilson_info_write(struct file *fiep, const char __user *buf, size_t count, loff_t *f_pos);
+static int zhwilson_info_open(struct inode *inode, struct file *filp);
+static int zhwilson_info_release(struct inode *inode, struct file *fiep);
+static ssize_t zhwilson_info_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos);
+static ssize_t zhwilson_info_write(struct file *fiep, const char __user *buf, size_t count, loff_t *f_pos);
 
 static struct file_operations zhwilson_info_fops = {
 	.owner = THIS_MODULE,
@@ -170,11 +202,113 @@ static struct file_operations zhwilson_info_fops = {
 	.write = zhwilson_info_write,
 };
 
-static void zhwilson_info_create_proc(void){
+//访问属性的方法
+static ssize_t zhwilson_info_show(struct device *dev, struct device_attribute *attr, char *buf);
+static ssize_t zhwilson_info_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count);
+
+//定义设备属性
+static DEVICE_ATTR(age, S_IRUGO|S_IUSR, zhwilson_info_show, zhwilson_info_store);
+
+static int zhwilson_info_open(struct inode *inode, struct file *filp){
+	struct zhwilson_dev *dev;
+	dev = container_of(inode->cdev, struct zhwilson_dev, dev);
+	filp->private_data = dev;
+	return 0;
+}
+
+static int zhwilson_info_release(struct inode *inode, struct file *filp){
+	return 0;
+}
+
+static ssize_t zhwilson_info_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos){
 	//TODO
 }
-static void zhwilson_info_destory_proc(void){
+
+static ssize_t zhwilson_info_write(struct file *filp, const char __user *buf, size_t count, loff_t *f_pos){
 	//TODO
+}
+
+
+static ssize_t __zhwilson_info_get_info(struct zhwilson_dev *dev, char *buf){
+	int age = 0;
+	if (down_interruptible(&(dev->sema))){
+		return -ERESTARTSYS;
+	}
+	age = dev->age;
+	up(&(dev->sema));
+	return snprintf(bug, PAGE_SIZE, "%d\n", age);
+}
+
+static ssize_t zhwilson_info_set_info(struct zhwilson_dev *dev, const char *buf, size_t count){
+	int age = 0;
+	//字符串转数字
+	age = simple_strtol(bug, NULL, 10);
+	if(down_interruptible(&(dev->sema))) return -ERESTARTSYS;
+	dev->age = age;
+	up(&(dev->sema));
+	return count;
+}
+
+static ssize_t zhwilson_info_show(struct device *dev, struct device_attribute *attr, char *buf){
+	struct zhwilson_dev *info_dev = (struct zhwilson_dev *)dev_get_drvdata(dev);
+	return __zhwilson_info_get_info(info_dev, buf);
+}
+
+static ssize_t zhwilson_info_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count){
+	struct zhwilson_dev *info_dev = (struct zhwilson_dev *)dev_get_drvdata(dev);
+	return __zhwilson_info_set_info(info_dev, buf, count);
+}
+
+//虚拟文件读取
+static ssize_t zhwilson_info_proc_read(char *page, char **start, off_t off, int count, int *eof, void *data){
+	if (off > 0){
+		eof = 1;
+		return 0;
+	}
+	
+	return __zhwilson_info_get_info(zhwilson_info_dev, page);
+}
+
+//虚拟文件数据写入
+static ssize_t zhwilson_info_proc_write(struct file *filp, const char __user *buf, unsigned long len, void *data){
+	int err = 0;
+	char *page = NULL;
+	if (len > PAGE_SIZE) {
+		printk(KERN_ALERT "The buff is too large:%lu.\n", len);
+		return -EFAULT;
+	}
+	page = (char *)__get_free_page(GFP_KERNEL);
+	if (!page){
+		printk(KERN_ALERT "Failed to alloc page.\n");
+		return -ENOMEM;
+	}
+	//把数据从缓冲区拷贝到内核缓冲区
+	if (copy_from_user(page, buf, len)){
+		printk(KERN_ALERT "Failed to copy buff from user.\n");
+		err = -EFAULT;
+		goto out;
+	}
+	
+	err = __zhwilson_info_set_info(zhwilson_info_dev, page, len);
+	
+	out:
+		free_page((unsigned long)page);
+	return err;
+}
+
+//在/proc目录下创建虚拟文件
+static void zhwilson_info_create_proc(void){
+	struct proc_dir_entry *entry;
+	entry = create_proc_entry(ZHWILSON_INFO_PROC_NAME, 0, NULL);
+	if (entry){
+		entry->owner = THIS_MODULE;
+		entry->read_proc = zhwilson_info_proc_read;
+		entry->write_proc = zhwilson_info_proc_write;
+	}
+}
+//删除虚拟文件
+static void zhwilson_info_destory_proc(void){
+	remove_proc_entry(ZHWILSON_INFO_PROC_NAME, NULL);
 }
 
 //初始化设备
