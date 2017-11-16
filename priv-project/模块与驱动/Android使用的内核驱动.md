@@ -221,11 +221,37 @@ static int zhwilson_info_release(struct inode *inode, struct file *filp){
 }
 
 static ssize_t zhwilson_info_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos){
-	//TODO
+	ssize_t err = 0;
+	struct zhwilson_dev *dev = filp->private_data;
+	
+	if (down_iterruptible(&(dev->sema))) return -ERESTARTSYS;
+	if (count < sizeof(dev->age)) goto out;
+	if (copy_to_user(buf, &(dev->age), sizeof(dev->age))){
+		err = -EFAULT;
+		goto out;
+	}
+	err = sizeof(dev->age);
+	
+	out:
+		up(&(dev->sema));
+	return err;
 }
 
 static ssize_t zhwilson_info_write(struct file *filp, const char __user *buf, size_t count, loff_t *f_pos){
-	//TODO
+	ssize_t err = 0;
+	struct zhwilson_dev *dev = filp->private_data;
+	
+	if (down_iterruptible(&(dev->sema))) return -ERESTARTSYS;
+	if (count != sizeof(dev->age)) goto out;
+	if (copy_from_user(&(dev->age), buf, count)){
+		err = -EFAULT;
+		goto out;
+	}
+	err = sizeof(dev->age);
+	
+	out:
+		up(&(dev->sema));
+	return err;
 }
 
 
