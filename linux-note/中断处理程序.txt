@@ -1,0 +1,78 @@
+中断：
+硬件->中断控制器->处理器
+
+中断->中断处理程序
+
+中断上下文
+
+中断处理程序：上半部，严格时限，中断被禁止
+
+当执行中断处理程序或者下半部时，内核处于中断上下文中
+中断上下文不可睡眠
+
+禁止中断和禁止内核抢占，都只能防止当前处理器的并发访问，要向提供保护机制来防止来自其他处理器的并发访问，需要提供锁机制
+禁止中断提供的保护机制，只是用来防止来自其他中断处理程序的并发访问
+
+相关方法：
+/*
+	注册中断处理程序
+	irq:要分配的中断号（可探测获取，可动态获取）
+	handler:中断处理程序指针
+	irqflags:
+		SA_INTERRUPT:表明给定的中断处理程序是快速中断处理程序（中断处理程序中禁止所有中断的情况下运行，默认情况下，中断处理程序在只有当前中断被禁止的情况下运行，其他的中断依然是激活的）
+		SA_SAMPLE_RANDOM:表明这个设备产生的中断对内核熵池有贡献（这个需要了解内核熵池）
+		SA_SHIRQ:表明多个中断处理程序共享中断线
+	devname:与中断相关的设备的ASCII文本表示（这些名字会被/proc/irq和/proc/interrupt文件使用）
+	dev_id:用于共享中断线
+*/
+int request_irq(unsigned int irq, irqretrun_t (*handler)(int, void *, struct pt_regs *), unsigned long irqflags, const char *devname, void *dev_id)；
+
+/*
+	释放中断处理程序
+*/
+free_irq(unsigned int irq, void *dev_id);
+
+/*
+	中断处理函数
+	irq:对应注册中断处理程序中的中断号（已没有什么用处）
+	dev_id:中断共享中断线时，必须与注册中断处理程序函数中的一致
+	regs:指向一个包含处理中断前处理器的寄存器和状态的结构的指针，基本不再使用
+	irqreturn_t:
+		IRQ_NONE:个人理解，也就是产生中断的dev_id不是中断函数指定的dev_id
+		IEQ_HANDLED:中断被处理
+*/
+static irqreturn_t intr_handler(int irq, void *dev_id, struct pt_regs *regs);
+
+//禁止中断
+local_irq_disable();
+//激活中断
+local_irq_enable();
+
+//禁止中断，然后恢复到中断原来的状态
+local_irq_save(unsigned long flags);
+...
+local_irq_restore(flags);
+
+//禁止指定的中断线(禁止给定中断向所有处理器的传递)
+void disable_irq(unsigned int irq);//只有在当前正在执行的所有处理程序完成后，才返回
+vois disable_irq_nosync(unsigned int irq);//不会等到当前的处理程序执行完毕
+//激活指定的中断线
+void enable_irq(unsigned int irq);
+void synchronize_irq(unsigned int irq);
+
+//检查中断系统的状态
+irqs_disable();//若当前处理器上的中断系统被禁止，返回非0
+
+//检查内核状态
+in_interrupt();//若内核处理中断上下文中，返回非0
+in_irq();//只有在内核在执行中断处理程序时返回非0
+
+
+
+
+more：
+1、内核熵池
+2、RTC(real_time clock)驱动程序，位置drivers/char/rtc.c
+3、时钟中断：set_rtc_mmss(),位置./arch/xxxx/kernel/time.c
+4、procfs代码，位置fs/proc
+5、中断控制，位置asm/system.h和asm/irq.h
