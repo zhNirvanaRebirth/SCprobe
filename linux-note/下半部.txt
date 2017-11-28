@@ -23,10 +23,128 @@
 	
 	//软中断处理程序
 	void softirq_handler(struct softirq_action *);
+	
+	//分配索引（在linux/interrupt.h中定义一个枚举类型来静态的声明软中断）
+	软中断索引号                    优先级                    软中断描述
+	HI_SOFTIRQ                      0                         优先级高的tasklet
+	TIMER_SOFTIRQ                   1                         定时器的下半部
+	NET_TX_SOFTIRQ                  2                         发送网络数据包
+	NET_RX_SOFTIRQ                  3                         接收网络数据包
+	SCSI_SOFTIRQ                    4                         SCSI下半部
+	TASKLET_SOFTIRQ                 5                         tasklet
+	注：新项添加在网络相关项之后，TASKLET_SOFTIRQ之前
+	
+	//注册软中断处理程序
+	open_softirq(NET_TX_SOFTIRQ, net_tx_action, NULL);//参数分别为：索引号，处理函数和data域
+	
+	//触发软中断
+	raise_softirq(NET_TX_SOFTIRQ);//在触发软中断之前要先禁止中断，触发后恢复回原来的状态
+	raise_softirq(NET_TX_SOFTIRQ);//中断已被禁止时调用
 
+tasklet的实现
+	//tasklet结构体
+	struct tasklet_struct {
+		struct tasklet_struct *next;//链表中下一个tasklet
+		unsigned long state;//tasklet的状态，可选值：0, TASKLET_STATE_SCHED(已被调度，正准备运行), TASKLET_STATE_RUN(正在运行)
+		atomic_t count;//应用计数器，若不为0，tasklet被禁止，不允许执行，只有count为0，改tasklet才能被激活
+		void (*func)(unsigned long);//tasklet处理函数
+		unsigned long data;//给处理函数的参数
+	}
 
-
-
-
+	//tasklet调度
+	tasklet_schedule()/tasklet_hi_schedule();
+	实现细节：
+		1、检查tasklet的状态是否是TASKLET_STATE_SCHED,如果是，说明tasklet已经被调度过了，函数立即返回
+		2、保存中断状态，然后禁止本地中断
+		3、把需要调度的tasklet加到每个处理器的tasklet_vec链表或tasklet_hi_vec链表的表头上去
+		4、唤起TASKLET_SOFTIRQ或TASKLET_HI_SOFTIRQ软中断，这样下一次调用do_softirq()时就会执行该tasklet
+		5、恢复中断到原状态并返回
+	//tasklet处理程序
+	tasklet_action()/tasklet_hi_action();
+	//实现细节
+		1、禁止中断并为当前处理器检索tasklet_vec或tasklet_hi_vec链表
+		2、将当前处理器上的该链表设置为NULL，达到清空的效果
+		3、允许响应中断
+		4、循环遍历获得链表上的每一个待处理的tasklet
+		5、若是多处理系统，需要检查TASKLET_STATE_RUN状态标志来判断该tasklet是否正在其他处理器上运行，若其正在运行，跳到下一个待处理的tasklet去
+		6、若该tasklet没有执行，将其状态设置为TASKLET_STATE_RUN，这样别的处理器就不会去执行他了
+		7、检查count值是否为0，确保tasklet没有被禁止，如已禁止，跳到下一个挂起的tasklet去
+		8、当确定该tasklet没有在其他地方运行，且被我们设置为运行状态，这样它在其他地方就不会被执行，且引用计数为0，现在可以执行tasklet处理程序了
+		9、tasklet运行完毕，清除tasklet的state的TASKLET_STATE_RUN状态标志
+		10、重复执行下一个tasklet，直到没有待处理的tasklet
+		
+	//tasklet声明
+	静态声明：
+		DECLARE_TASKLET(name, func, data);//声明一个tasklet的引用计数为0，表示该tasklet为激活状态
+		DECLARE_TASKLET_DISABLE(name, func, data);//声明一个tasklet的引用计数为1，表示该tasklet为禁止状态
+	动态创建：
+		tasklet_init(t, tasklet_handler, dev);
+		
+	//taskelt禁止与激活
+	tasklet_disable(&zhwilson_tasklet);
+	...
+	tasklet_enable(&zhwilson_tasklet);
+	
+ksoftirqd
+	一组处理大量软中断的内核线程
+	
+工作队列
+	把工作交给内核线程去执行，运行在进程上下文中
+	默认的工作者线程叫做events/n,n是处理器的编号
+	
+	工作者线程（workqueue_struct）结构：
+		struct workqueue_struct {
+			struct cpu_workqueue_struct cpu_wq[NR_CPUS];//每个cpu对应一个cpu_workqueue_struct
+			cosnt char *name;
+			struct list_head list;
+		}
+		
+		struct cpu_workqueue_struct {
+			spinlock_t lock;
+			long remove_sequence;//最后一个被加上的（下一个要运行的）
+			long insert_sequence;//下一个要加上的
+			struct list_head worklist;//工作列表
+			wait_queue_head_t more_work;
+			wait_queue_head_t work_done;
+			struct workqueue_struct *wq;//有关联的workqueue_struct
+			task_t *thread;//有关联的线程
+			int run_depth;//run_workqueue()循环深度
+		}
+	
+	工作结构：
+		struct work_struct {
+			unsigned long pending;//这个工作是否正在等待处理
+			struct list_head entry;//连接所有工作的链表
+			void (*func)(void *);//处理函数
+			void *data;//传给处理函数的参数
+			void *wq_data;//内部使用数据
+			struct timer_list timer;//延迟的工作队列所使用的定时器
+		}
+		
+	创建工作
+		DECLARE_WORK(name, void (*func)(void *), void *data);//静态创建
+		INIT_WORK(struct work_struct *work, void (*func)(void *), void *data);//动态创建
+		
+	工作队列处理函数
+		void work_handler(void *data);
+	对工作调度
+		schedule_work(&work);//立即调度，当其所在的处理器上的工作者线程被唤醒，它就会被执行
+		schedule_delayed_work(&work, delay);//调度后在指定后的时间执行
+		int cancel_delayed_work(struct work_struct *work);//取消延迟执行的工作
+		void flush_scheduled_work(void);//函数会一直等待，直到队列中所有都被执行后再返还
+	
+	创建工作者线程
+		struct workqueue_struct *create_workqueue(const char *name);
+	调度指定队列
+		int queue_work(struct workqueue_struct *wq, struct work_struct *work);
+		int queue_delayed_work(struct workqueue_struct *wq, struct work_struct *work, unsigned long delay);
+	刷新指定队列
+		flush_workqueue(struct workqueue_struct *wq);
+		
+禁止/激活下半部
+	void local_bh_disable();//禁止本地处理器的软中断和tasklet的处理
+	void local_bh_enable();
+		
 more:
 1、软中断实现，位置：kernel/softirq.c
+2、工作者线程相关，位置：kernel/workqueue.c
