@@ -31,8 +31,8 @@
 *tar -vxzf aosp-latest.tar*  
 进入aosp目录: *cd aosp*  
 *repo sync*  
-然后选择版本同步: *repo init -u https://aosp.tuna.tsinghua.edu.cn/platform/manifest -b android-5.1.1_r1*  
-*repo sync*  
+选择版本初始化: *repo init -u https://aosp.tuna.tsinghua.edu.cn/platform/manifest -b android-5.1.1_r1*  
+同步对应版本的Android源码：*repo sync*  
 _这里需要经历漫长的等待，在网速和电脑配置等个人影响因素下，我等了五天！若中途失败，重新执行“repo sync”即可_  
 ### 编译Android源码  
 1. 进入上面创建的Android目录，我们的源码就下载在这里，执行命令：  
