@@ -30,9 +30,9 @@ _ÕâÀïÐèÒª¾­ÀúÂþ³¤µÄµÈ´ý£¬ÔÚÍøËÙºÍµçÄÔÅäÖÃµÈ¸öÈËÓ°ÏìÒòËØÏÂ£¬ÎÒµÈÁËÎåÌì£¡ÈôÖÐÍ¾Ê§°
 1. ½øÈëÉÏÃæ´´½¨µÄAndroidÄ¿Â¼£¬ÎÒÃÇµÄÔ´Âë¾ÍÏÂÔØÔÚÕâÀï£¬Ö´ÐÐÃüÁî£º  
 *make*  
 2. Óöµ½µÄÎÊÌâ£º  
-*ninja: no work to do*  
+* *ninja: no work to do*  
 ÉÏÃæÌáµ½¹ý£¬ÎÒ¿ªÊ¼×°µÄubuntuÏµÍ³ÊÇ16.04µÄ°æ±¾£¬ºóÃæ¸Ä³É14.04µÄ°æ±¾¾ÍokÁË  
-*... asked for an OpenJDK ...*  
+* *... asked for an OpenJDK ...*  
 ±àÒëÐèÒªopenjdk£¬ËùÒÔÕâÀï°´ÕÕÉÏÊöµÄ°²×°¶ÔÓ¦°æ±¾µÄopenjdk¾ÍokÁË  
-*ÆäËû*  
+* *ÆäËû*  
 ±ÈÈçÊ²Ã´ÍøÂçÎÊÌâÑ½£¬´ÅÅÌ·ÖÅäÎÊÌâÑ½£¬·´ÕýºÜ¶à£¬¾Í×Ô¼º²éÕÒ´¦ÀíÁË
