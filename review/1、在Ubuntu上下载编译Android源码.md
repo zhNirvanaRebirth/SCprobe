@@ -15,7 +15,7 @@
 6. 安装相关的依赖包：这里只是一部分，后面遇到其他的需要的依赖包，再安装就是，在ubuntu上执行下面的命令即可：  
 *sudo apt-get install flex bison gperf libsdl-dev libesd0-dev libwxgtk2.6-dev build-essential zip curl*  
 ### 下载Android源码工程  
-**需要科学上网，否则你可以需要使用清华大学的镜像[详见](http://www.jianshu.com/p/aeaceda41798)**  
+**需要科学上网，否则你可能需要使用清华大学的镜像[详见](http://www.jianshu.com/p/aeaceda41798)**  
 1. 下载repo工具：在ubuntu上依次执行下面的命令即可：
 *wget https://dl-ssl.google.com/dl/googlesource/git-repo/repo*  
 *chmod 777 repo*  
@@ -25,4 +25,14 @@
 *cd Android*  
 *repo init -u https://dl-ssl.google.com/dl/googlesource/git-repo/repo*  
 *repo sync*  
-_这里需要经历漫长的等待，在网速和电脑配置等个人影响因素下，我等了五天！若中途失败，重新执行“repo sync”即可_
+_这里需要经历漫长的等待，在网速和电脑配置等个人影响因素下，我等了五天！若中途失败，重新执行“repo sync”即可_  
+### 编译Android源码  
+1. 进入上面创建的Android目录，我们的源码就下载在这里，执行命令：  
+*make*  
+2. 遇到的问题：  
+*ninja: no work to do*  
+上面提到过，我开始装的ubuntu系统是16.04的版本，后面改成14.04的版本就ok了  
+*... asked for an OpenJDK ...*  
+编译需要openjdk，所以这里按照上述的安装对应版本的openjdk就ok了  
+*其他*  
+比如什么网络问题呀，磁盘分配问题呀，反正很多，就自己查找处理了
