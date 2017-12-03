@@ -9,7 +9,7 @@
 3. Ubuntu系统安装：这里我使用的ubuntu系统的版本是14.04，开始使用的是16.04，但是遇到“ninja: no work to do”的问题，所以就将系统改成了14.04  
 4. 安装git工具：因为我们需要下载android源码，而android的是使用git工具管理的，在ubuntu上执行下面的命令即可：  
 *sudo apt-get install git-core gnupg*  
-5. JDK安装：这里我安装老罗的命令执行，在编译过程中提示我说需要openjdk，所以这里就先直接安装openjdk吧，在ubuntu上执行下面的命令即可：[详见](http://www.jianshu.com/p/aeaceda41798)  
+5. JDK安装：这里我安装老罗的命令执行，在编译过程中提示我说需要openjdk，所以这里就先直接安装openjdk吧，在ubuntu上执行下面的命令即可：[详见](http://www.jianshu.com/p/aeaceda41798?_blank)  
 *sudo apt-get install openjdk-7-jre*  
 *apt-get install openjdk-7-jdk*  
 6. 安装相关的依赖包：这里只是一部分，后面遇到其他的需要的依赖包，再安装就是，在ubuntu上执行下面的命令即可：  
@@ -24,7 +24,7 @@
 `REPO_URL = 'https://gerrit.googlesource.com/git-repo'  
 修改为：  
 REPO_URL = 'https://gerrit-google.tuna.tsinghua.edu.cn/git-repo'`  
-3. 下载Android的源代码：在ubuntu上依次执行下面的命令即可：  
+3. 下载Android的源代码：在ubuntu上依次执行下面的命令和操作即可：  
 *mkdir Android*  
 *cd Android*  
 *wget -c -t 0 https://mirrors.tuna.tsinghua.edu.cn/aosp-monthly/aosp-latest.tar*  
