@@ -33,12 +33,12 @@
 *source build/envsetup.sh*  
 *lunch 1*  
 *启动模拟器并指定使用的内核文件：emulator -kernel ./kernel/goldfish/arch/arm/boot/zImage &*  
-2.使用adb工具链接模拟器，查看内核信息：一次执行下列操作：  
+2. 使用adb工具链接模拟器，查看内核信息：依次执行下列操作：  
 *链接模拟器：adb shell*  
 *进入模拟器的proc目录：cd proc*  
 *查看内核信息：cat version*  
 可通过内核信息看出模拟器使用的内核是不是我们编译出来的内核  
-##遗留问题：  
+## 遗留问题：  
 * 交叉编译工具那样设置的原因？  
 ARCH ?= arm 是设置编译体系结构为arm  
 CROSS_COMPILE     ?= arm-eabi-   设置交叉编译工具的前缀，如使用gcc编译，最终会找到prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin目录下的arm-eabi-gcc  
