@@ -15,11 +15,11 @@
 6. 安装相关的依赖包：这里只是一部分，后面遇到其他的需要的依赖包，再安装就是，在ubuntu上执行下面的命令即可：  
 *sudo apt-get install flex bison gperf libsdl-dev libesd0-dev libwxgtk2.6-dev build-essential zip curl*  
 ### 下载Android源码工程*需要科学上网，否则你可以需要使用清华大学的镜像[详见](http://www.jianshu.com/p/aeaceda41798)*  
-1.下载repo工具：在ubuntu上依次执行下面的命令即可：
+1. 下载repo工具：在ubuntu上依次执行下面的命令即可：
 *wget https://dl-ssl.google.com/dl/googlesource/git-repo/repo*  
 *chmod 777 repo*  
 *cp repo /bin/*  
-2.下载Android的源代码：在ubuntu上依次执行下面的命令即可：  
+2. 下载Android的源代码：在ubuntu上依次执行下面的命令即可：  
 *mkdir Android*  
 *cd Android*  
 *repo init -u https://dl-ssl.google.com/dl/googlesource/git-repo/repo*  
