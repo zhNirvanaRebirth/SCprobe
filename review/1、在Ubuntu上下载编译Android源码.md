@@ -29,9 +29,9 @@
 *cd Android*  
 *wget -c -t 0 https://mirrors.tuna.tsinghua.edu.cn/aosp-monthly/aosp-latest.tar*  
 *tar -vxzf aosp-latest.tar*  
-进入aosp目录*cd aosp*  
+进入aosp目录: *cd aosp*  
 *repo sync*  
-然后选择版本同步*repo init -u https://aosp.tuna.tsinghua.edu.cn/platform/manifest -b android-5.1.1_r1*  
+然后选择版本同步: *repo init -u https://aosp.tuna.tsinghua.edu.cn/platform/manifest -b android-5.1.1_r1*  
 *repo sync*  
 _这里需要经历漫长的等待，在网速和电脑配置等个人影响因素下，我等了五天！若中途失败，重新执行“repo sync”即可_  
 ### 编译Android源码  
