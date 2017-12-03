@@ -15,15 +15,24 @@
 6. °²×°Ïà¹ØµÄÒÀÀµ°ü£ºÕâÀïÖ»ÊÇÒ»²¿·Ö£¬ºóÃæÓöµ½ÆäËûµÄĞèÒªµÄÒÀÀµ°ü£¬ÔÙ°²×°¾ÍÊÇ£¬ÔÚubuntuÉÏÖ´ĞĞÏÂÃæµÄÃüÁî¼´¿É£º  
 *sudo apt-get install flex bison gperf libsdl-dev libesd0-dev libwxgtk2.6-dev build-essential zip curl*  
 ### ÏÂÔØAndroidÔ´Âë¹¤³Ì  
-**ĞèÒª¿ÆÑ§ÉÏÍø£¬·ñÔòÄã¿ÉÄÜĞèÒªÊ¹ÓÃÇå»ª´óÑ§µÄ¾µÏñ[Ïê¼û](http://www.jianshu.com/p/aeaceda41798)**  
+**ĞèÒª¿ÆÑ§ÉÏÍø£¬·ñÔòÄã¿ÉÄÜĞèÒªÊ¹ÓÃÇå»ª´óÑ§µÄ¾µÏñ£¬ÎÒÊÇÊ¹ÓÃµÄÇå»ª´óÑ§µÄ¾µÏñ[Ïê¼û](http://www.jianshu.com/p/aeaceda41798)**  
 1. ÏÂÔØrepo¹¤¾ß£ºÔÚubuntuÉÏÒÀ´ÎÖ´ĞĞÏÂÃæµÄÃüÁî¼´¿É£º
 *wget https://dl-ssl.google.com/dl/googlesource/git-repo/repo*  
 *chmod 777 repo*  
 *cp repo /bin/*  
-2. ÏÂÔØAndroidµÄÔ´´úÂë£ºÔÚubuntuÉÏÒÀ´ÎÖ´ĞĞÏÂÃæµÄÃüÁî¼´¿É£º  
+2. ĞŞ¸Ä/bin/repoÎÄ¼ş£ºÒòÎª/bin/repoÏÂÃæµÄÎÄ¼şÊÇÎŞ·¨Ö±½ÓĞŞ¸ÄµÄ£¬ËùÒÔÎÒÃÇĞèÒª½«Äã¸´ÖÆµ½ÁíÒ»¸öµØ·½£¬È»ºóĞŞ¸Ä£¬ÔÙ¸²¸Ç/bin/repo£¬ĞŞ¸ÄÄÚÈİÈçÏÂ£º  
+`REPO_URL = 'https://gerrit.googlesource.com/git-repo'  
+ĞŞ¸ÄÎª£º  
+REPO_URL = 'https://gerrit-google.tuna.tsinghua.edu.cn/git-repo'`  
+3. ÏÂÔØAndroidµÄÔ´´úÂë£ºÔÚubuntuÉÏÒÀ´ÎÖ´ĞĞÏÂÃæµÄÃüÁî¼´¿É£º  
 *mkdir Android*  
 *cd Android*  
-*repo init -u https://dl-ssl.google.com/dl/googlesource/git-repo/repo*  
+*wget -c -t 0 https://mirrors.tuna.tsinghua.edu.cn/aosp-monthly/aosp-latest.tar*  
+*tar -vxzf aosp-latest.tar*  
+½øÈëaospÄ¿Â¼  
+*repo sync*  
+È»ºóÑ¡Ôñ°æ±¾Í¬²½  
+*repo init -u https://aosp.tuna.tsinghua.edu.cn/platform/manifest -b android-5.1.1_r1*  
 *repo sync*  
 _ÕâÀïĞèÒª¾­ÀúÂş³¤µÄµÈ´ı£¬ÔÚÍøËÙºÍµçÄÔÅäÖÃµÈ¸öÈËÓ°ÏìÒòËØÏÂ£¬ÎÒµÈÁËÎåÌì£¡ÈôÖĞÍ¾Ê§°Ü£¬ÖØĞÂÖ´ĞĞ¡°repo sync¡±¼´¿É_  
 ### ±àÒëAndroidÔ´Âë  
@@ -35,4 +44,19 @@ _ÕâÀïĞèÒª¾­ÀúÂş³¤µÄµÈ´ı£¬ÔÚÍøËÙºÍµçÄÔÅäÖÃµÈ¸öÈËÓ°ÏìÒòËØÏÂ£¬ÎÒµÈÁËÎåÌì£¡ÈôÖĞÍ¾Ê§°
 * *... asked for an OpenJDK ...*  
 ±àÒëĞèÒªopenjdk£¬ËùÒÔÕâÀï°´ÕÕÉÏÊöµÄ°²×°¶ÔÓ¦°æ±¾µÄopenjdk¾ÍokÁË  
 * *ÆäËû*  
-±ÈÈçÊ²Ã´ÍøÂçÎÊÌâÑ½£¬´ÅÅÌ·ÖÅäÎÊÌâÑ½£¬·´ÕıºÜ¶à£¬¾Í×Ô¼º²éÕÒ´¦ÀíÁË
+±ÈÈçÊ²Ã´ÍøÂçÎÊÌâÑ½£¬´ÅÅÌ·ÖÅäÎÊÌâÑ½£¬·´ÕıºÜ¶à£¬¾Í×Ô¼º²éÕÒ´¦ÀíÁË  
+### °²×°±àÒëºÃµÄAndroid¾µÏñµ½Ä£ÄâÆ÷ÉÏ  
+1. ÉèÖÃ»·¾³±äÁ¿£ºÕâÀïĞèÒª½«emulatorÃüÁîÒÔ¼°Android¾µÏñÄ¿Â¼ÉèÖÃÎª»·¾³±äÁ¿£¬ÕâÀïÎÒ²ÉÓÃµÄÊÇĞŞ¸Ä/etc/profileÎÄ¼ş£¬ÎÒµÄAndroid¾µÏñÄ¿Â¼£º¡°home/zhwilson/Android/aosp/out/target/product/generic¡±£¬emulatorÄ¿Â¼£º¡°home/zhwilson/Android/aosp/prebuilts/android-emulator/linux-x86_64¡±£¬¶ø²»ÊÇÔÚ¡°home/zhwilson/Android/aosp/out/host/linux-x86/bin¡±Ä¿Â¼ÏÂ£¬ËùÒÔÎÒÔÚ/etc/profileÎÄ¼şÖĞÌí¼ÓÁËÒÔÏÂ´úÂë£º  
+*export PATH=$PATH:home/zhwilson/Android/aosp/prebuilts/android-emulator/linux-x86_64:home/zhwilson/Android/aosp/out/target/product/generic*  
+2. ÔËĞĞÄ£ÄâÆ÷£ºÎÒÃÇÖ±½ÓÔËĞĞemulatorÃüÁî£¬»á³öÏÖ¸÷ÖÖÎÊÌâ£¬ÎÒºóÃæ·¢ÏÖ»¹ÊÇÓÉÓÚÒÔÏÂ»·¾³±äÁ¿Ã»ÓĞÉèÖÃµ¼ÖÂµÄ£¬²é¿´»·¾³±äÁ¿ÃüÁî¡°env | grep PATH¡±£¬ËùÒÔÎÒÃÇĞèÒªÔÚÖ´ĞĞemulatorÏÈÖ´ĞĞÒÔÏÂÃüÁî£º  
+*source build/envsetup.sh*  
+*lunch*  
+*1(Õâ¸öÊı×ÖÓÉÄãÒªÔÚÊ²Ã´¼Ü¹¹µÄÄ£ÄâÆ÷ÉÏÔËĞĞ¾ö¶¨)*  
+´ËÊ±ÄãÔÙ²é¿´»·¾³±äÁ¿£¬»á·¢ÏÖ¶àÁËºÜ¶à±àÒë¼°°²×°AndroidÔ´ÂëµÄ»·¾³±äÁ¿£¬´ËÊ±Ö´ĞĞÃüÁîemulatorÊ±£¬Ä£ÄâÆ÷¾Í¿ªÊ¼Æô¶¯ÁË  
+3. Óöµ½µÄÎÊÌâ£º  
+*emulator: command not found*  
+¾ÍÊÇemulator»·¾³±äÁ¿Â·¾¶ÉèÖÃ´íÁË£¬ÉÏÊöÒÑÌáµ½  
+*»·¾³±äÁ¿ÉèÖÃºÃÖ®ºó£¬ÔËĞĞemulator»¹ÊÇ³öÏÖ¸÷ÖÖ´íÎó*  
+ÕâÀï¾ÍÊÇÃ»ÓĞÔËĞĞÉÏÊöµÚ¶şµãÌáµ½µÄÃüÁî£¬ÖÁÓÚÕâĞ©ÃüÁî¸ÉÁËÊ²Ã´£¬»¹Ã»ÓĞÈ¥ÑĞ¾¿£¬ºóÃæÔÙ¿´ÁË[Ïê¼û](http://blog.csdn.net/u011913612/article/details/51878356)  
+---
+**ÕâÀï¶¼ÊÇÒ»Ğ©±Ê¼Ç£¬ÓÉÓÚÖªÊ¶ÓĞÏŞ£¬¿Ï¶¨ÓĞ´íÎóµÄµØ·½£¬Ï£Íû²»ÒªÎóµ¼ÔÄ¶Á´ËÎÄµÄÍ¬Ñ§£¬Èç¹ûÓĞ´íÎóµÄµØ·½£¬»¹Ï£ÍûÖ¸Õı**
