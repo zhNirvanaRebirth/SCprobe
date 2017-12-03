@@ -1,5 +1,5 @@
 **ÖªÊ¶µã£ºÔÚUbuntuÉÏÏÂÔØ¡¢±àÒëºÍ°²×°AndroidÔ´Âë  
-ÖªÊ¶À´Ô´£ºÀÏÂŞ²©¿Í-[ÔÚUbuntuÉÏÏÂÔØ¡¢±àÒëºÍ°²×°Android×îĞÂÔ´´úÂë](http://blog.csdn.net/luoshengyang/article/details/6559955)  
+ÖªÊ¶À´Ô´£ºÀÏÂŞ²©¿Í-<a href="http://blog.csdn.net/luoshengyang/article/details/6559955" target="_blank">ÔÚUbuntuÉÏÏÂÔØ¡¢±àÒëºÍ°²×°Android×îĞÂÔ´´úÂë</a>  
 ¼ÇÂ¼ÄÚÈİ£ºÔÚÊµ¼Ê²Ù×÷ÖĞÓöµ½µÄÎÊÌâºÍ´¦Àí·½·¨**  
 ***  
 ## ²½Öè£º  
@@ -9,21 +9,21 @@
 3. UbuntuÏµÍ³°²×°£ºÕâÀïÎÒÊ¹ÓÃµÄubuntuÏµÍ³µÄ°æ±¾ÊÇ14.04£¬¿ªÊ¼Ê¹ÓÃµÄÊÇ16.04£¬µ«ÊÇÓöµ½¡°ninja: no work to do¡±µÄÎÊÌâ£¬ËùÒÔ¾Í½«ÏµÍ³¸Ä³ÉÁË14.04  
 4. °²×°git¹¤¾ß£ºÒòÎªÎÒÃÇĞèÒªÏÂÔØandroidÔ´Âë£¬¶øandroidµÄÊÇÊ¹ÓÃgit¹¤¾ß¹ÜÀíµÄ£¬ÔÚubuntuÉÏÖ´ĞĞÏÂÃæµÄÃüÁî¼´¿É£º  
 *sudo apt-get install git-core gnupg*  
-5. JDK°²×°£ºÕâÀïÎÒ°²×°ÀÏÂŞµÄÃüÁîÖ´ĞĞ£¬ÔÚ±àÒë¹ı³ÌÖĞÌáÊ¾ÎÒËµĞèÒªopenjdk£¬ËùÒÔÕâÀï¾ÍÏÈÖ±½Ó°²×°openjdk°É£¬ÔÚubuntuÉÏÖ´ĞĞÏÂÃæµÄÃüÁî¼´¿É£º[Ïê¼û](http://www.jianshu.com/p/aeaceda41798?_blank)  
+5. JDK°²×°£ºÕâÀïÎÒ°²×°ÀÏÂŞµÄÃüÁîÖ´ĞĞ£¬ÔÚ±àÒë¹ı³ÌÖĞÌáÊ¾ÎÒËµĞèÒªopenjdk£¬ËùÒÔÕâÀï¾ÍÏÈÖ±½Ó°²×°openjdk°É£¬ÔÚubuntuÉÏÖ´ĞĞÏÂÃæµÄÃüÁî¼´¿É£º<a href="http://www.jianshu.com/p/aeaceda41798" target="_blank">Ïê¼û</a>  
 *sudo apt-get install openjdk-7-jre*  
 *apt-get install openjdk-7-jdk*  
 6. °²×°Ïà¹ØµÄÒÀÀµ°ü£ºÕâÀïÖ»ÊÇÒ»²¿·Ö£¬ºóÃæÓöµ½ÆäËûµÄĞèÒªµÄÒÀÀµ°ü£¬ÔÙ°²×°¾ÍÊÇ£¬ÔÚubuntuÉÏÖ´ĞĞÏÂÃæµÄÃüÁî¼´¿É£º  
 *sudo apt-get install flex bison gperf libsdl-dev libesd0-dev libwxgtk2.6-dev build-essential zip curl*  
 ### ÏÂÔØAndroidÔ´Âë¹¤³Ì  
-**ĞèÒª¿ÆÑ§ÉÏÍø£¬·ñÔòÄã¿ÉÄÜĞèÒªÊ¹ÓÃÇå»ª´óÑ§µÄ¾µÏñ£¬ÎÒÊÇÊ¹ÓÃµÄÇå»ª´óÑ§µÄ¾µÏñ[Ïê¼û](http://www.jianshu.com/p/aeaceda41798)**  
+**ĞèÒª¿ÆÑ§ÉÏÍø£¬·ñÔòÄã¿ÉÄÜĞèÒªÊ¹ÓÃÇå»ª´óÑ§µÄ¾µÏñ£¬ÎÒÊÇÊ¹ÓÃµÄÇå»ª´óÑ§µÄ¾µÏñ<a href="http://www.jianshu.com/p/aeaceda41798" target="_blank">Ïê¼û</a>**  
 1. ÏÂÔØrepo¹¤¾ß£ºÔÚubuntuÉÏÒÀ´ÎÖ´ĞĞÏÂÃæµÄÃüÁî¼´¿É£º
 *wget https://dl-ssl.google.com/dl/googlesource/git-repo/repo*  
 *chmod 777 repo*  
 *cp repo /bin/*  
 2. ĞŞ¸Ä/bin/repoÎÄ¼ş£ºÒòÎª/bin/repoÏÂÃæµÄÎÄ¼şÊÇÎŞ·¨Ö±½ÓĞŞ¸ÄµÄ£¬ËùÒÔÎÒÃÇĞèÒª½«Äã¸´ÖÆµ½ÁíÒ»¸öµØ·½£¬È»ºóĞŞ¸Ä£¬ÔÙ¸²¸Ç/bin/repo£¬ĞŞ¸ÄÄÚÈİÈçÏÂ£º  
-`REPO_URL = 'https://gerrit.googlesource.com/git-repo'  
-ĞŞ¸ÄÎª£º  
-REPO_URL = 'https://gerrit-google.tuna.tsinghua.edu.cn/git-repo'`  
+    REPO_URL = 'https://gerrit.googlesource.com/git-repo'  
+    ĞŞ¸ÄÎª£º  
+    REPO_URL = 'https://gerrit-google.tuna.tsinghua.edu.cn/git-repo'  
 3. ÏÂÔØAndroidµÄÔ´´úÂë£ºÔÚubuntuÉÏÒÀ´ÎÖ´ĞĞÏÂÃæµÄÃüÁîºÍ²Ù×÷¼´¿É£º  
 *mkdir Android*  
 *cd Android*  
@@ -57,6 +57,6 @@ _ÕâÀïĞèÒª¾­ÀúÂş³¤µÄµÈ´ı£¬ÔÚÍøËÙºÍµçÄÔÅäÖÃµÈ¸öÈËÓ°ÏìÒòËØÏÂ£¬ÎÒµÈÁËÎåÌì£¡ÈôÖĞÍ¾Ê§°
 *emulator: command not found*  
 ¾ÍÊÇemulator»·¾³±äÁ¿Â·¾¶ÉèÖÃ´íÁË£¬ÉÏÊöÒÑÌáµ½  
 *»·¾³±äÁ¿ÉèÖÃºÃÖ®ºó£¬ÔËĞĞemulator»¹ÊÇ³öÏÖ¸÷ÖÖ´íÎó*  
-ÕâÀï¾ÍÊÇÃ»ÓĞÔËĞĞÉÏÊöµÚ¶şµãÌáµ½µÄÃüÁî£¬ÖÁÓÚÕâĞ©ÃüÁî¸ÉÁËÊ²Ã´£¬»¹Ã»ÓĞÈ¥ÑĞ¾¿£¬ºóÃæÔÙ¿´ÁË[Ïê¼û](http://blog.csdn.net/u011913612/article/details/51878356)  
+ÕâÀï¾ÍÊÇÃ»ÓĞÔËĞĞÉÏÊöµÚ¶şµãÌáµ½µÄÃüÁî£¬ÖÁÓÚÕâĞ©ÃüÁî¸ÉÁËÊ²Ã´£¬»¹Ã»ÓĞÈ¥ÑĞ¾¿£¬ºóÃæÔÙ¿´ÁË<a href="http://blog.csdn.net/u011913612/article/details/51878356" target="_blank">Ïê¼û</a>  
 ---
 **ÕâÀï¶¼ÊÇÒ»Ğ©±Ê¼Ç£¬ÓÉÓÚÖªÊ¶ÓĞÏŞ£¬¿Ï¶¨ÓĞ´íÎóµÄµØ·½£¬Ï£Íû²»ÒªÎóµ¼ÔÄ¶Á´ËÎÄµÄÍ¬Ñ§£¬Èç¹ûÓĞ´íÎóµÄµØ·½£¬»¹Ï£ÍûÖ¸Õı**
