@@ -1,0 +1,251 @@
+SQLite
+	特点：
+		不需要在一个独立进程中运行
+		可进行动态和静态链接（什么是动态链接，什么是动态链接）
+		可以直接访问其存储文件
+
+	命令：
+		数据定义语言（DDL）：create, alter, drop
+		数据操作语言（DML）：insert, update, delete
+		数据查询语言（DQL）：select
+
+		.timer on|off                            是否显示时间
+		.header on|off                           是否显示header
+		.mode MODE
+				column
+				list
+				line
+		.show                                    显示数据库默认设置
+
+
+	SQLite语句：
+		不区分大小写
+		以select, insert, update, delete, create, alter, drop关键字开始，以分号（";"）结束
+
+		SQLite analyze语句
+			analyze/analyze database_name/analyze database_name.table_name;
+		SQLite and/or语句
+			select column1,column2,... form table_name where condition1 and condition2;
+		SQLite alter table语句
+			alter table table_name and column column_def...;(什么意思？)
+			alter table table_name rename to new_table_name;(rename)
+		SQLite attach database语句
+			attach database database_name as database_alias_name;
+		SQLite between语句
+			select column1, column2,... from table_name where condition between var1 and var2;
+		SQLite create index语句
+			create index index_name on table_name ( column_name collate nocase ); (干什么用？)
+		SQLite create unique index语句
+			create unique index index_name on table_name ( column1, column2, ... );（干什么用？）
+		SQLite create table语句
+			create table table_name (column1 datatype, column2 datatype, ... );
+			Android: create table table_name (column1 datatype primary key autoincrement, column2 datatype, ...);
+		SQLite create trigger语句
+			create trigger database_name.trigger_name before insert on table_name for each row begin stmt1; stmt2; ... end;（干什么用？有什么用？）
+		SQLite create view语句
+			create view database_name.view_name as select statement ...;（干什么用？有什么用？）
+		SQLite create virtual table语句
+			create virtual table database_name.table_name using weblog( access.log );
+			create virtual table database_name.table_name using fts( );（干什么用？有什么用？）
+		SQLite commit transaction语句
+			commit;
+		SQLite count语句
+			select count(column_name) from table_name where condition;
+		SQLite delete语句
+			delete from table_name where { condition };
+		SQLite detach database语句
+			detach database database_alias_name;
+		SQLite distinct语句
+			select distinct column1, column2, ... from table_name;（怎么用？）
+		SQLite drop index语句
+			drop index database_name.index_name;（这句话对么？）
+		SQLite drop table语句
+			drop table database_name.table_name;
+		Sqlite drop view语句
+			drop view view_name;
+		SQLite drop trigger语句
+			drop trigger trigger_name;
+		SQLite exists语句
+			select column1, column2, ... from table_name where column_name exists ( select * from table_name );
+		SQLite explain语句
+			explain insert statement...;
+			explain query plan select statement...;(干什么用？有什么用？)
+		SQLite glob语句
+			select column1, column2, ... from table_name where column_name grob { pattern };（干什么用）
+		SQLite group by语句
+			select sum(column_name) fron table_name where condition group by column_name;（怎么用？）
+		SQLite having语句
+			select sum(column_name) from table_name where condition group by column_name having ( arithematic function condition );(怎么用？)
+		SQLite insert into语句
+			insert into table_name( column1, column2, ... ) values ( value1, value2, ... );
+		SQLite in语句
+			select column1, column2, ... from table_name where column_name in ( var1, var2, ....);(怎么用？)
+		SQLite like语句
+			select column1, column2, ... from table_name where column_name like { pattern };
+		SQLite not in语句
+			select column1, column2, ... from table_name where column_name not in ( var1, var2, ... );
+		SQLite order by语句
+			select column1, column2, ... from table_name where condition order by column_name { asc|desc };
+		SQLite pragma语句
+			pragma page_size;
+			pragma cache_size = 1024;
+			pragma table_info(table_name);(干什么用？怎么用？)
+		SQLite release savepoint语句
+			release savepoint_name;（怎么用？）
+		SQLite reindex语句
+			reindex collation_name;
+			reindex database_name.index_name;
+			reindex database_name.table_name;（干什么用？怎么用？）
+		SQLite rollback语句
+			rollback;
+			rollback to savepoint savepoint_name;（怎么用？）
+		SQLite savepoint语句
+			savepoint savepoint_name;(怎么用？)
+		SQLite vacuum语句
+			vacuum;（干什么用？）
+		SQLite select语句
+			select column1, column2, ... from table_name;
+		SQLite update语句
+			update table_name set column1 = value1, column2 = value2, ... [ where condition ];
+		SQLite where语句
+			select column1, column2, ... from table_name where condition;
+
+
+	使用：
+		.dump
+			备份：sqlite3 test.db .dump > test.sql;
+			还原：sqlite3 test.db < test.sql;
+
+		attach/detach
+			attach database 'test.db' as TEST;   //将TEST附加到test.db上，此时操作TEST就相当于操作test.db (TEST为别名，不能是main和temp)
+			detach database TEST       //解除附加
+
+		.databases      显示数据库名称及附加关系
+		.tables         显示数据库中的表名
+		.show           显示当前表展示配置
+		.schema table_name    显示创建指定表的完整语句
+			.schema 的实现
+				select sql from sqlite_master where type = 'table' and tbl_name = table_name;
+
+		逻辑运算符
+			and
+			or
+			between
+			exists
+			in
+			not in
+			like         %：零个，一个或多个数字或字符； _：一个数字或字符
+			glob         *：零个，一个或多个数字或字符； ?：一个数字或字符
+			not
+			is null
+			is
+			is not
+			||
+			unique
+
+		SQLite约束：用来限制可以插入到表中的数据类型，约束在表的数据上强制执行的规则
+			not null
+			default
+			unique
+			primary key
+			check
+
+		SQLite joins:用于结合两个或多个数据库中表的记录
+			cross join
+			inner join
+				select * from table_name1 inner join table_name2 on condition;
+				select * from table_name1 join table_name2 using ( column1, ... );   
+				select * from table_name1 natural join table_name2;                  //自动检测两个表中相等的列，然后组合
+			outer join (SQLite只支持left outer join, 语法类似于inner join)
+
+		SQLite union:合并两个或多个查询语句的结果，不返回重复的行，条件是查询语句被选择的列数，列的数据类型，顺序必须相同
+			select name, age from table_name1 union select name, age from table_name2;
+
+		SQLite trigger:数据库的回调函数，在指定的数据库事件发生时自动执行
+			SQLite只支持for each row, 不支持for each statement
+			when
+			before
+			after
+			new.column_name/old.column_name
+			设置触发器：create trigger trigger_name before/after event_name on table_name 
+						when condition
+						begin
+							action of event_name happen do...;
+						end;
+			罗列触发器：select name from sqlite_master where type="trigger";
+						select name from sqlite_master where type="trigger" and tbl_name="table_name";  //罗列在某张表上的触发器
+			删除触发器：drop trigger trigger_name;
+
+		SQLite index:
+			索引有助于加快select查询和where语句，但会减慢update和insert操作，创建和删除索引不会影响数据
+			创建索引：create index index_name on table_name;
+			单列索引：create index index_name on table_name ( column_name );
+			唯一索引：create unique index index_name on table_name ( column_name );
+			组合索引：create index index_name on table_name ( column_name1, column_name2, ... );
+			显示某个表上的索引：.indices table_name
+								select * from sqlite_master where type="index" and tbl_name="table_name";
+			删除索引：drop index index_name;
+			使用索引的注意事项：
+				索引不应使用在较小的表上
+				索引不应使用在有频繁的大批量的更新或插入操作的表上
+				索引不应使用在含有大量的null值的列上
+				索引不应使用在频繁操作的列上
+
+		SQLite indexed by:
+			该子句规定必须需要命名的索引来查找表中的值
+			select column_name1, column_name2, ... from table_name indexed by index_name where condition;
+
+		SQLite alter:
+			slqite alter table语句只支持修改表名或向表中新增一列
+			修改表名：alter table database_name.table_name rename to database_name.new_table_name;
+			新增列：alter table database_name.table_name add column column_name type;
+
+		SQLite view;
+			视图实际上是一个以预定义的sqlite查询形式存在的表的组合（个人理解：视图就是存储了一个查询语句的结果，至于这个查询语句要查什么，随便你写）
+			视图是一种虚表，允许用户实现以下几点：
+				用户或用户组查找结构数据的方式更自然或直观
+				限制数据访问，用户只能看到有限的数据，而不是完整的表
+				汇总各种表中的数据，用于生成报告
+			视图是只读的
+			创建视图：create [temp|temporary] view view_name as 
+						select column_name1, column_name2, ... from table_name where condition;
+			使用视图：select * from view_name;(这里就是展示上述查询语句的内容)
+			删除视图：drop view view_name;
+
+		SQLite transaction:
+			事务是一个对数据库执行工作的单元（包括数据库数据的增删改操作，不含数据库的创建和删除操作）
+			事务的属性：
+				原子性：确保工作单位内的所以操作都成功完成，否则，事务在出现故障时终止，之前的操作也回滚到之前的状态
+				一致性：确保数据库在成功提交的事务上正确的改变状态
+				隔离性：事务操作互相独立和透明
+				持久性：确保已提交事务的结果或效果在系统发生故障的情况下仍然存在
+			事务控制
+				开始事务：begin;/begin transaction;
+				保存事务：commit;/end transaction;
+				回滚事务：rollback;
+
+		SQLite子查询
+			子查询是将一个SQLite查询内嵌在where子句中的查询，将子查询的数据作为主查询的条件，进一步限制要检索的数据
+			子查询可以与select、insert、update、delete语句一起使用，可使用的operator：=,<,>,<=,>=,in,between
+			子查询遵循的规则：
+				子查询必须用括号括起来
+				子查询在select子句中只能有一个列，除非主查询中有多列与子查询的所选列进行比较
+				order by不能用在子查询中，group by可以在子查询中使用
+				子查询返回多于一列，只能与多值运算符一起使用，如in
+				between不能与子查询一起使用，但是子查询中可以使用between
+
+		SQLite autoincrement
+			字段自增，只能修饰integer字段
+
+		SQLite常用函数
+			count
+			max
+			min
+			sum
+			avg
+			random
+			abs
+			upper
+			lower
+			length
+			

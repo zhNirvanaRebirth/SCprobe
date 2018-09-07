@@ -1,0 +1,132 @@
+android面试之android篇
+
+Activity:
+	Q：说下Activity的生命周期？
+	A：	onCreate->onStart->onResume->onPause->onStop->onDestory
+		当Activity被部分遮挡再获取焦点：onPause->onResume
+		当Activity被完全遮挡或切到后台，且未被系统回收：onStop->onRestart->onStart
+		当Activity被切到后台且被回收：onStop->onCreate->onStart->onResume
+
+	Q：onStart()和onResume()/onPause()和onStop()的区别？
+	A：	onStart：Activity可见，没有焦点，无法操作
+		onResume：Activity可见，有焦点，可以操作
+		onPause：Activity部分可见/失去焦点（multi-window mode）
+		onStop：Activity不可见
+	
+	Q：Activity A启动另一个Activity B会回调哪些方法？如果Activity B是完全透明呢？如果启动的是一个Dialog呢？
+	A： 对于Activity A：onPause->onStop
+		对于Activity B：                onCreate->onStart->onResume
+		若Activity B全透明，需要验证？？？？？？？？？？？？？？？？
+		若为dialog，Activity A只执行onPause  （Activity B是一个dialog Activity？？？？？？？？）
+
+	Q：谈谈onSaveInstanceState()方法？何时会调用？
+	A： onSaveInstanceState是在当我们的配置发生改变或者Activity进入后台被系统清理的情况下，我们想在Activity再次显示在用户眼前的时候，其状态没有发生任何改变
+		在Activity收到onPause到onStop回调之间会调用，若Activity显示调用了finish时，该方法不会调用
+
+	Q：onSaveInstanceState()与onPause()的区别？
+	A： onSaveInstanceState作为保存Activity状态使用
+		onPause表示Activity失去焦点
+
+	Q：如何避免配置改变时Activity重建？
+	A： 在Androidmanifest文件中对应的Activity标签下设置config属性，标识在哪些配置发生变化时，Activity不应该重启，并在Activity中的onConfigChanged方法中手动处理相关配置变化
+
+	Q：优先级低的Activity在内存不足被回收后怎样做可以恢复到销毁前状态？
+	A： 可以使用onSaveInstanceState保存简单的数据保存Activity的状态
+		亦可以使用Fragment并设置setReXXX保存Activity的状态
+		还有么？？？？？？？？？？？
+
+	Q：说下Activity的四种启动模式？（有时会出个实际问题来分析返回栈中Activity的情况）
+	A： standard：标准模式，Activity根据启动与启动它的亲和性，创建一个Activity返回栈（从luncher中启动）或被放入Activity返回栈顶
+		singleTop：当被启动的Activity已经在Activity返回栈顶时，不会再创建一个Activity实例，而是收到onNewIntent回调
+		singleInstance：当被启动的Activity已经在Activity返回栈中，此时，返回栈会pop出该Activity上面的Activity，该Activity收到onNewIntent回调
+		singleTask：将Activity放到新的任务中，如果该Activity已在新的任务中，其收到onNewIntent回调（这几个还有不是记得很清，回头在仔细看看？？？？？？？？？？？？？？？）
+
+	Q：谈谈singleTop和singleTask的区别以及应用场景
+	A： 应用场景可以仔细再看看？？？？？？？？？？？？？？？？？？？？？？
+
+	Q：onNewIntent()调用时机？
+	A： Activity的启动模式为singleTop且位于栈顶，此时再次被启动
+		Activity的启动模式为singleInstance且存在栈中，此时再次被启动
+		Activity的启动模式为singleTask且已存在，此时再次被启动
+
+	Q：了解哪些Activity启动模式的标记位？
+	A：？？？？？？？？？？？？？？？？？？？？？？？？
+
+	Q：如何启动其他应用的Activity？
+	A： 其他应用的Activity必须是export的，且提供了intent-filter，设置了action和category，我们通过其action可以启动该Activity
+
+	Q：Activity的启动过程？
+	A：？？？？？？？？？？？？？？？？？？？？？？？
+
+Fragment：
+	Q：谈一谈Fragment的生命周期？
+	A： onAttach->onCreate->onCreateView->onActivityCreate->onStart->onResume->onPause->onStop->onDestoryView->onDestory->onDetach
+		当fragment从返回栈中返回到layout：onDestoryView->onCreateView->onActivityCreate(会执行么？？？？？？？) ->onStart->onResume->....
+
+	Q：Activity和Fragment的异同？
+	A:  Activity是一个页面，我们所看见的所有Android界面都是在Activity中呈现
+		Fragment：片段，显示一部分界面内容
+		（这个问题应该怎么更好的回答？需要回答到哪些点？？？？？？？？？？？？？？）
+
+	Q：Activity和Fragment的关系？
+	A： 一个Activity中可以有零个，一个或多个Fragment，用来显示其内容
+
+	Q：何时会考虑使用Fragment？
+	A： 当我们需要在多个界面显示相同的内容（复用）
+		多窗口/界面中显示的内容需要根据Activity或者程序的不同状态做切换（切换）
+		保存复杂的Activity状态，用于配置发生改变时，回复界面的状态使用
+		（还有什么情况下需要使用fragment？？？？？？？？？？？？？？？？？？）
+
+Service：
+	Q：谈一谈Service的生命周期？
+	A： startService: onCreate->onStartCommand->onDestory
+		bindService:  onCreate->onBind->onUnbind->onDestory
+
+	Q：Service的两种启动方式？区别在哪？
+	A:  start:Service不会随启动它的组件的退出而退出，而是在完成了自己的任务之后退出，或者显示调用stopService时退出
+		bind：Service会随最后一个绑定它的组件的退出而退出，或者调用unBind时退出
+		（？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？）
+
+	Q：一个Activty先start一个Service后，再bind时会回调什么方法？此时如何做才能回调Service的destory()方法？
+	A： startService：service会收到的回调：onCreate->onStartCommand
+		在bind会收到的回调：onBind
+		当我们先调用unBind再stopService时，或者先stopService再退出Activity或unbind的时候会收到Service的destory的回调（？？？？？？？？？？？？？？？？？？？？？？？？？？？？）
+
+	Q：Service如何和Activity进行通信？
+	A:  Activity到Service：启动时传参
+		Service到Activity：？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
+
+	Q：用过哪些系统Service？
+	A： IntentService，通过getSystemService获得的Service（ActivityServiceManager， PackageManager， ？？？？？？？？？？？？？？？？？？？？？？？？）
+
+	Q：是否能在Service进行耗时操作？如果非要可以怎么做？
+	A： 因为Service还是运行在主线程中的，所以不建议在其中做耗时操作，需要做耗时操作，就需要在其中开子线程中操作，但这个时候Service本身可能被系统回收，这种情况下需要做相关处理，防止内存泄漏
+
+	Q：AlarmManager能实现定时的原理？
+	A：？？？？？？？？？？？？？？？？？？？？？？？？？？？？
+
+	Q：前台服务是什么？和普通服务的不同？如何去开启一个前台服务？
+	A：和可见Activity同等优先级的服务，在内存不足时，普通服务比前台服务被内存先回收，startForgrandService？？？？？？？？？？？？？？？？？？？？
+
+	Q：是否了解ActivityManagerService，谈谈它发挥什么作用？
+	A：？？？？？？？？？？？？？？？？？？？？？？？？？？？？
+
+	Q：如何保证Service不被杀死？
+	A：设置为前台Service，设置守护进程，Service不被杀死没法保证？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
+
+Broadcast Receiver：
+	Q：广播有几种形式？什么特点？
+	A： ？？？？？？？？？？？？？？？？？？？？？？？？？？？？
+	Q：广播的两种注册形式？区别在哪？
+	A： 在配置文件中注册
+		在代码中动态注册
+		在配置文件中注册的广播，在应用安装到应用卸载都能收到广播
+		在代码中动态注册的广播，必须动态取消注册，切只有在注册后，取消注册前才能收到广播
+		（？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？）
+
+ContentProvider：
+	Q：ContentProvider了解多少？
+	A： （从哪些点说起，使用，创建，有什么作用？？？？？？？？？？？？？？？？？？？？？？？？？？）
+
+	
+
